@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="http://127.0.0.1:8000/solve" method="post">
+        <select id="nodes" multiple="multiple">
+            <option value="1">Problem 1</option>
+            <option value="2">Problem 2</option>
+            <option value="3">Problem 3</option>
+        </select>
+        <button type="submit">Login</button>
+    </form>
+</body>
+<script>
+    const form = document.querySelector('form');
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const nodes = document.getElementById('nodes');
+        nodes_array = [];
+        for (let i = 0; i < nodes.options.length; i++) {
+            if (nodes.options[i].selected) {
+                // data.append('nodes', nodes.options[i].value);
+                nodes_array.push(nodes.options[i].value);
+            }
+        }
+        
+        const data = new FormData();
+        data.append('nodes', nodes_array);
+
+        fetch('http://127.0.0.1:8000/solve', {
+            method: 'POST',
+            body: data
+        }).then(response => {
+            console.log(response);
+            
+            response.json().then(data => {
+                console.log(data);
+            });
+        }).catch(error => {
+            console.log(error);
+        });
+    });
+        
+
+        
+
+</script>
+</html>
