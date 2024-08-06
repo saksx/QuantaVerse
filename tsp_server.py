@@ -13,16 +13,18 @@ uvicorn tsp_server:app --reload
 """
 
 def tsp_quantum_solver(adj_matrix):
+    """ TODO: Complete this function"""
+
     return [0, 1, 2, 3]
 
+
+## TODO: Create a Appropriate Distances matrix to build upon
 distances_matrix = [
     [0, 1, 2, 3],
     [1, 0, 4, 5],
     [2, 4, 0, 6],
     [3, 5, 6, 0]
 ]
-
-
 
 
 def get_adj_matrix(list_of_cities):
