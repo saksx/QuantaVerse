@@ -3,22 +3,45 @@ from fastapi import FastAPI, Form
 from typing import Annotated
 from fastapi.middleware.cors import CORSMiddleware
 
+from qiskit.circuit.library import TwoLocal
+from qiskit_optimization.applications import Tsp
+from qiskit_algorithms import SamplingVQE
+from qiskit_algorithms.optimizers import SPSA
+# from qiskit_algorithms.utils import algorithm_globals
+from qiskit.primitives import Sampler as Sampler
+
+from qiskit_optimization.converters import QuadraticProgramToQubo
+
+import networkx as nx
+
 """
 Installations:
 pip install fastapi uvicorn python-multipart
 
 Run:
 uvicorn tsp_server:app --reload
-
 """
 
 def tsp_quantum_solver(adj_matrix):
-    """ TODO: Complete this function"""
+    graph = nx.from_numpy_matrix(adj_matrix)
+    tsp = Tsp(graph)
+    qp = tsp.to_quadratic_program()
+    
+    qp2qubo = QuadraticProgramToQubo()
+    qubo = qp2qubo.convert(qp)
+    qubitOp, offset = qubo.to_ising()
+    
+    optimizer = SPSA(maxiter=300)
+    ry = TwoLocal(qubitOp.num_qubits, "ry", "cz", reps=5, entanglement="linear")
+    vqe = SamplingVQE(sampler=Sampler(), ansatz=ry, optimizer=optimizer)
 
-    return [0, 1, 2, 3]
+    result = vqe.compute_minimum_eigenvalue(qubitOp)
 
+    x = tsp.sample_most_likely(result.eigenstate)
+    z = tsp.interpret(x)
+    
+    return z
 
-## TODO: Create a Appropriate Distances matrix to build upon
 distances_matrix = [
     [0, 1, 2, 3],
     [1, 0, 4, 5],
