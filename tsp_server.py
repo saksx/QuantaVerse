@@ -23,7 +23,7 @@ uvicorn tsp_server:app --reload
 """
 
 def tsp_quantum_solver(adj_matrix):
-    graph = nx.from_numpy_matrix(adj_matrix)
+    graph = nx.from_numpy_array(adj_matrix)
     tsp = Tsp(graph)
     qp = tsp.to_quadratic_program()
     
@@ -63,7 +63,7 @@ app = FastAPI()
 # Allow cors
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*", "null"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
